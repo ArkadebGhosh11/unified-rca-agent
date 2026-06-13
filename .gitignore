@@ -45,3 +45,29 @@ memory/chroma_db/
 
 .coverage
 htmlcov/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# ChromaDB
+memory/chroma_db/
+chroma/
+
+# Neo4j
+neo4j/data/
+neo4j/logs/
+
+# Generated data
+data/generated/
+
+# Logs
+logs/
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Docker
+docker/.env

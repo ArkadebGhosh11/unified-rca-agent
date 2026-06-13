@@ -1,0 +1,7 @@
+{
+    "storage_latency_spike": false,
+    "database_slowdown": false,
+    "network_latency_spike": false,
+    "application_errors": false,
+    "compute_resource_exhaustion": false
+}

@@ -1,0 +1,51 @@
+{
+"nodes": [
+{
+"id": "storage-cluster-a",
+"type": "storage",
+"name": "Storage Cluster A"
+},
+{
+"id": "postgres-db",
+"type": "database",
+"name": "PostgreSQL Database"
+},
+{
+"id": "order-api",
+"type": "application",
+"name": "Order API"
+},
+{
+"id": "checkout-service",
+"type": "application",
+"name": "Checkout Service"
+},
+{
+"id": "customer",
+"type": "business",
+"name": "Customer Transactions"
+}
+],
+"edges": [
+{
+"source": "storage-cluster-a",
+"target": "postgres-db",
+"relationship": "supports"
+},
+{
+"source": "postgres-db",
+"target": "order-api",
+"relationship": "serves"
+},
+{
+"source": "order-api",
+"target": "checkout-service",
+"relationship": "depends_on"
+},
+{
+"source": "checkout-service",
+"target": "customer",
+"relationship": "impacts"
+}
+]
+}
