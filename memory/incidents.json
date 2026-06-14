@@ -1,0 +1,8 @@
+[
+    {
+        "incident_id": "INC-001",
+        "root_cause": "storage-cluster-a",
+        "resolution": "Increase storage IOPS",
+        "summary": "Storage latency spike caused application slowdown"
+    }
+]
