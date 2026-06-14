@@ -24,10 +24,10 @@ Unified Observability & Root-Cause Analysis (RCA) Agent — telemetry generators
 
 3. Run a telemetry generator (in separate shells):
 
-   python telemetry/storage_generator.py
-   python telemetry/network_generator.py
-   python telemetry/compute_generator.py
-   python telemetry/application_generator.py
+   python -m telemetry.storage_generator
+   python -m telemetry.network_generator
+   python -m telemetry.compute_generator
+   python -m telemetry.application_generator
 
 4. Run simple examples from tests or interact with agents:
 
