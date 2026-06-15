@@ -9,7 +9,45 @@ from datetime import datetime, UTC
 
 class AnomalyAgent:
 
-    def detect_storage_anomaly(self, metric):
+    def detect_anomaly(
+        self,
+        metric
+    ):
+
+        tower = metric.get(
+            "tower"
+        )
+
+        if tower == "storage":
+
+            return self.detect_storage_anomaly(
+                metric
+            )
+
+        elif tower == "application":
+
+            return self.detect_application_anomaly(
+                metric
+            )
+
+        elif tower == "network":
+
+            return self.detect_network_anomaly(
+                metric
+            )
+
+        elif tower == "compute":
+
+            return self.detect_compute_anomaly(
+                metric
+            )
+
+        return None
+
+    def detect_storage_anomaly(
+        self,
+        metric
+    ):
 
         if metric["latency_ms"] > 200:
 
@@ -18,13 +56,20 @@ class AnomalyAgent:
                 "component": metric["component"],
                 "severity": "critical",
                 "anomaly_type": "high_latency",
-                "message": "Storage latency exceeded threshold",
-                "timestamp": datetime.now(UTC).isoformat()
+                "message":
+                    "Storage latency exceeded threshold",
+                "timestamp":
+                    datetime.now(
+                        UTC
+                    ).isoformat()
             }
 
         return None
 
-    def detect_application_anomaly(self, metric):
+    def detect_application_anomaly(
+        self,
+        metric
+    ):
 
         if metric["response_time_ms"] > 2000:
 
@@ -33,13 +78,20 @@ class AnomalyAgent:
                 "service": metric["service"],
                 "severity": "critical",
                 "anomaly_type": "slow_response",
-                "message": "Application response time exceeded threshold",
-                "timestamp": datetime.now(UTC).isoformat()
+                "message":
+                    "Application response time exceeded threshold",
+                "timestamp":
+                    datetime.now(
+                        UTC
+                    ).isoformat()
             }
 
         return None
 
-    def detect_network_anomaly(self, metric):
+    def detect_network_anomaly(
+        self,
+        metric
+    ):
 
         if metric["latency_ms"] > 100:
 
@@ -48,13 +100,20 @@ class AnomalyAgent:
                 "component": metric["component"],
                 "severity": "critical",
                 "anomaly_type": "high_latency",
-                "message": "Network latency exceeded threshold",
-                "timestamp": datetime.now(UTC).isoformat()
+                "message":
+                    "Network latency exceeded threshold",
+                "timestamp":
+                    datetime.now(
+                        UTC
+                    ).isoformat()
             }
 
         return None
 
-    def detect_compute_anomaly(self, metric):
+    def detect_compute_anomaly(
+        self,
+        metric
+    ):
 
         if metric["cpu_percent"] > 85:
 
@@ -63,8 +122,12 @@ class AnomalyAgent:
                 "component": metric["component"],
                 "severity": "critical",
                 "anomaly_type": "high_cpu",
-                "message": "CPU utilization exceeded threshold",
-                "timestamp": datetime.now(UTC).isoformat()
+                "message":
+                    "CPU utilization exceeded threshold",
+                "timestamp":
+                    datetime.now(
+                        UTC
+                    ).isoformat()
             }
 
         return None

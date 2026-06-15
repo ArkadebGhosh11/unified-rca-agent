@@ -1,5 +1,5 @@
 {
-    "storage_latency_spike": false,
+    "storage_latency_spike": true,
     "database_slowdown": false,
     "network_latency_spike": false,
     "application_errors": false,
