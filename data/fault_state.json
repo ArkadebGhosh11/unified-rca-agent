@@ -2,6 +2,6 @@
     "storage_latency_spike": true,
     "database_slowdown": false,
     "network_latency_spike": true,
-    "application_errors": false,
-    "compute_resource_exhaustion": false
+    "application_errors": true,
+    "compute_resource_exhaustion": true
 }

@@ -1,43 +1,218 @@
-# Unified RCA Agent
+# Unified Observability & RCA Agent
 
-Unified Observability & Root-Cause Analysis (RCA) Agent — telemetry generators, anomaly detectors, and a simple correlation agent for end-to-end RCA experiments.
+AI-powered observability platform that correlates telemetry across Storage, Network, Compute, and Application layers, learns from historical incidents, and automatically generates Root Cause Analysis (RCA) reports.
 
-## Project status
-- Telemetry generators implemented: storage, network, compute, application.
-- Fault injection and shared fault state manager implemented.
-- Anomaly detection (AnomalyAgent) and correlation logic (CorrelationAgent) implemented.
-- Incident dataclass model and example scripts/tests included.
-- Frontend (Streamlit) and API scaffolds present (some files intentionally minimal).
+---
 
-## Components
-- telemetry/: Synthetic telemetry generators and fault_injector.
-- backend/agents/: AnomalyAgent and CorrelationAgent implementations.
-- backend/models/: Incident dataclass model.
-- data/: Topology, sample incidents and fault state JSON files.
-- tests/: Basic unit tests demonstrating usage.
+# Architecture
 
-## Quickstart
-1. Create a Python 3.10+ virtualenv and activate it.
-2. Install requirements:
+Telemetry Generators
+↓
+Anomaly Detection Agent
+↓
+Correlation Engine
+↓
+Incident Memory
+↓
+Learning Agent
+↓
+AI RCA Agent
+↓
+Streamlit Dashboard
 
-   pip install -r requirements.txt
+---
 
-3. Run a telemetry generator (in separate shells):
+# Prerequisites
 
-   python -m telemetry.storage_generator
-   python -m telemetry.network_generator
-   python -m telemetry.compute_generator
-   python -m telemetry.application_generator
+* Python 3.11+
+* OpenAI API Key
+* Virtual Environment
 
-4. Run simple examples from tests or interact with agents:
+---
 
-   python tests/test_incident.py
-   python tests/test_anomaly_agent.py
-   python tests/test_correlation_agent.py
+# Installation
 
-## Notes about LLM inference (vLLM)
-This project intends to run LLM-based inference using vLLM. Install `vllm` and provide a model binary or model path per vLLM documentation. vLLM may require GPU/CUDA and additional dependencies; follow vLLM docs for environment setup.
+Clone the repository:
 
-## Running tests
+```bash
+git clone https://github.com/ArkadebGhosh11/unified-rca-agent.git
 
-   pytest -q
+cd unified-rca-agent
+```
+
+Create and activate virtual environment:
+
+```bash
+python -m venv venv
+
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Create `.env` file:
+
+```env
+OPENAI_API_KEY=your_openai_api_key
+```
+
+---
+
+# Verify Installation
+
+Check OpenAI package:
+
+```bash
+python -c "import openai; print(openai.__version__)"
+```
+
+Expected:
+
+```text
+1.93.0
+```
+
+Run unit tests:
+
+```bash
+python -m tests.test_incident_memory
+
+python -m tests.test_learning_agent
+
+python -m tests.test_correlation_agent
+```
+
+---
+
+# Start Dashboard
+
+Always run Streamlit using the virtual environment:
+
+```bash
+python -m streamlit run frontend/dashboard.py
+```
+
+Open browser:
+
+```text
+http://localhost:8501
+```
+
+---
+
+# Demo Scenario 1 – Storage Failure
+
+Inject storage fault:
+
+```python
+from telemetry.fault_injector import enable_fault
+
+enable_fault(
+    "storage_latency_spike"
+)
+```
+
+Expected Results:
+
+* Storage telemetry becomes critical
+* Application telemetry becomes critical
+* Active incidents detected
+* Root cause identified as storage-cluster-a
+* RCA generated automatically
+
+---
+
+# Demo Scenario 2 – Network Failure
+
+Inject network fault:
+
+```python
+from telemetry.fault_injector import enable_fault
+
+enable_fault(
+    "network_latency_spike"
+)
+```
+
+Expected Results:
+
+* Network telemetry becomes critical
+* Network incident generated
+* Correlation engine identifies core-network
+* RCA generated automatically
+
+---
+
+# Demo Scenario 3 – Compute Failure
+
+Inject compute fault:
+
+```python
+from telemetry.fault_injector import enable_fault
+
+enable_fault(
+    "compute_resource_exhaustion"
+)
+```
+
+Expected Results:
+
+* CPU utilization exceeds threshold
+* Compute incident generated
+* Root cause identified as worker-node-01
+* RCA generated automatically
+
+---
+
+# Clear All Faults
+
+Reset platform:
+
+```python
+from telemetry.fault_injector import reset_all_faults
+
+reset_all_faults()
+```
+
+Expected Results:
+
+* All telemetry returns to healthy state
+* No active incidents
+* No RCA generated
+
+---
+
+# Key Features
+
+* Multi-Tower Telemetry Monitoring
+* Fault Injection Framework
+* Automated Anomaly Detection
+* Cross-Tower Correlation Engine
+* Historical Incident Memory
+* Learning-Based Resolution Suggestions
+* AI-Powered Root Cause Analysis
+* Interactive Streamlit Dashboard
+
+---
+
+# Technology Stack
+
+* Python
+* Streamlit
+* OpenAI GPT-4o
+* ChromaDB
+* Sentence Transformers
+
+---
+
+# Future Enhancements
+
+* Multi-root-cause correlation
+* Real-time streaming telemetry
+* Kubernetes integration
+* Service dependency graph
+* Automated remediation workflows
