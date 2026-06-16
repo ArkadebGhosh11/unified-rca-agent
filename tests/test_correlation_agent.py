@@ -7,11 +7,17 @@ agent = CorrelationAgent()
 incidents = [
     {
         "tower": "storage",
-        "severity": "critical"
+        "component":
+            "storage-cluster-a",
+        "severity":
+            "critical"
     },
     {
         "tower": "application",
-        "severity": "critical"
+        "service":
+            "checkout-api",
+        "severity":
+            "critical"
     }
 ]
 
