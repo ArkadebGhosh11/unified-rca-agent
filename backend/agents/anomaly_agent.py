@@ -49,11 +49,18 @@ class AnomalyAgent:
         metric
     ):
 
-        if metric["latency_ms"] > 200:
+        if metric.get(
+            "latency_ms",
+            0
+        ) > 200:
 
             return {
                 "tower": "storage",
-                "component": metric["component"],
+                "component":
+                    metric.get(
+                        "component",
+                        "storage-cluster-a"
+                    ),
                 "severity": "critical",
                 "anomaly_type": "high_latency",
                 "message":
@@ -71,11 +78,23 @@ class AnomalyAgent:
         metric
     ):
 
-        if metric["response_time_ms"] > 2000:
+        if metric.get(
+            "response_time_ms",
+            0
+        ) > 2000:
 
             return {
                 "tower": "application",
-                "service": metric["service"],
+                "service":
+                    metric.get(
+                        "service",
+                        "unknown-service"
+                    ),
+                "component":
+                    metric.get(
+                        "service",
+                        "unknown-service"
+                    ),
                 "severity": "critical",
                 "anomaly_type": "slow_response",
                 "message":
@@ -93,11 +112,18 @@ class AnomalyAgent:
         metric
     ):
 
-        if metric["latency_ms"] > 100:
+        if metric.get(
+            "latency_ms",
+            0
+        ) > 100:
 
             return {
                 "tower": "network",
-                "component": metric["component"],
+                "component":
+                    metric.get(
+                        "component",
+                        "core-network"
+                    ),
                 "severity": "critical",
                 "anomaly_type": "high_latency",
                 "message":
@@ -115,11 +141,18 @@ class AnomalyAgent:
         metric
     ):
 
-        if metric["cpu_percent"] > 85:
+        if metric.get(
+            "cpu_percent",
+            0
+        ) > 85:
 
             return {
                 "tower": "compute",
-                "component": metric["component"],
+                "component":
+                    metric.get(
+                        "component",
+                        "worker-node-01"
+                    ),
                 "severity": "critical",
                 "anomaly_type": "high_cpu",
                 "message":

@@ -3,6 +3,7 @@ dashboard.py
 
 Unified Observability & RCA Agent Dashboard
 """
+
 import sys
 from pathlib import Path
 
@@ -14,10 +15,17 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.append(
         str(PROJECT_ROOT)
     )
+
 import streamlit as st
 
 from telemetry.storage_generator import (
     generate_metrics
+)
+
+from telemetry.fault_injector import (
+    enable_fault,
+    reset_all_faults,
+    get_fault_state
 )
 
 from backend.agents.anomaly_agent import (
@@ -36,10 +44,76 @@ from backend.agents.rca_agent import (
     RCAAgent
 )
 
+# --------------------------------------------------
+# Page Config
+# --------------------------------------------------
+
 st.set_page_config(
     page_title="Unified RCA Agent",
     layout="wide"
 )
+
+# --------------------------------------------------
+# Sidebar
+# --------------------------------------------------
+
+st.sidebar.title(
+    "⚙️ Fault Controls"
+)
+
+current_faults = (
+    get_fault_state()
+)
+
+st.sidebar.subheader(
+    "Current Fault State"
+)
+
+st.sidebar.json(
+    current_faults
+)
+
+if st.sidebar.button(
+    "Inject Storage Fault"
+):
+    enable_fault(
+        "storage_latency_spike"
+    )
+    st.rerun()
+
+if st.sidebar.button(
+    "Inject Network Fault"
+):
+    enable_fault(
+        "network_latency_spike"
+    )
+    st.rerun()
+
+if st.sidebar.button(
+    "Inject Compute Fault"
+):
+    enable_fault(
+        "compute_resource_exhaustion"
+    )
+    st.rerun()
+
+if st.sidebar.button(
+    "Inject Application Fault"
+):
+    enable_fault(
+        "application_errors"
+    )
+    st.rerun()
+
+if st.sidebar.button(
+    "Clear All Faults"
+):
+    reset_all_faults()
+    st.rerun()
+
+# --------------------------------------------------
+# Header
+# --------------------------------------------------
 
 st.title(
     "🔍 Unified Observability & RCA Agent"
@@ -52,21 +126,29 @@ st.markdown(
 st.divider()
 
 # --------------------------------------------------
-# Initialize agents
+# Initialize Agents
 # --------------------------------------------------
 
 anomaly_agent = AnomalyAgent()
-correlation_agent = CorrelationAgent()
-learning_agent = LearningAgent()
 
-# RCA agent is expensive, create only when needed
+correlation_agent = (
+    CorrelationAgent()
+)
+
+learning_agent = (
+    LearningAgent()
+)
+
+# Create RCA agent once
 rca_agent = RCAAgent()
 
 # --------------------------------------------------
-# Generate telemetry
+# Generate Telemetry
 # --------------------------------------------------
 
-storage_metrics = generate_metrics()
+storage_metrics = (
+    generate_metrics()
+)
 
 col1, col2 = st.columns(2)
 
@@ -81,11 +163,13 @@ with col1:
     )
 
 # --------------------------------------------------
-# Detect anomaly
+# Detect Anomaly
 # --------------------------------------------------
 
-incident = anomaly_agent.detect_anomaly(
-    storage_metrics
+incident = (
+    anomaly_agent.detect_anomaly(
+        storage_metrics
+    )
 )
 
 with col2:
@@ -100,17 +184,9 @@ with col2:
             "Anomaly Detected"
         )
 
-        if hasattr(
-            incident,
-            "to_dict"
-        ):
-            st.json(
-                incident.to_dict()
-            )
-        else:
-            st.json(
-                incident
-            )
+        st.json(
+            incident
+        )
 
     else:
 
@@ -132,17 +208,8 @@ correlation_result = None
 
 if incident:
 
-    incident_data = (
-        incident.to_dict()
-        if hasattr(
-            incident,
-            "to_dict"
-        )
-        else incident
-    )
-
     incidents = [
-        incident_data
+        incident
     ]
 
     correlation_result = (

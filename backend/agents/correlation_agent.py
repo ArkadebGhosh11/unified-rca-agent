@@ -21,65 +21,138 @@ class CorrelationAgent:
                 "reason": "No incidents found"
             }
 
-        for incident in incidents:
-
-            if (
-                incident["tower"] == "storage"
-                and
-                incident["severity"] == "critical"
-            ):
-
-                return {
-                    "root_cause":
-                        incident.get(
-                            "component",
-                            "unknown-component"
-                        ),
-                    "confidence": 0.95,
-                    "reason":
-                        "Storage degradation "
-                        "correlated with service impact"
-                }
+        storage_incident = None
+        network_incident = None
+        compute_incident = None
+        application_incident = None
 
         for incident in incidents:
 
-            if (
-                incident["tower"] == "network"
-                and
-                incident["severity"] == "critical"
-            ):
-
-                return {
-                    "root_cause":
-                        incident.get(
-                            "component",
-                            "unknown-component"
-                        ),
-                    "confidence": 0.90,
-                    "reason":
-                        "Network degradation "
-                        "correlated with service impact"
-                }
-
-        for incident in incidents:
+            tower = incident.get(
+                "tower"
+            )
 
             if (
-                incident["tower"] == "compute"
+                tower == "storage"
                 and
-                incident["severity"] == "critical"
+                incident.get(
+                    "severity"
+                ) == "critical"
             ):
+                storage_incident = incident
 
-                return {
-                    "root_cause":
-                        incident.get(
-                            "component",
-                            "unknown-component"
-                        ),
-                    "confidence": 0.88,
-                    "reason":
-                        "Compute resource exhaustion "
-                        "correlated with service impact"
-                }
+            elif (
+                tower == "network"
+                and
+                incident.get(
+                    "severity"
+                ) == "critical"
+            ):
+                network_incident = incident
+
+            elif (
+                tower == "compute"
+                and
+                incident.get(
+                    "severity"
+                ) == "critical"
+            ):
+                compute_incident = incident
+
+            elif (
+                tower == "application"
+                and
+                incident.get(
+                    "severity"
+                ) == "critical"
+            ):
+                application_incident = incident
+
+        # Storage causing application slowdown
+
+        if (
+            storage_incident
+            and
+            application_incident
+        ):
+
+            return {
+                "root_cause":
+                    storage_incident.get(
+                        "component",
+                        "storage-cluster-a"
+                    ),
+                "confidence": 0.98,
+                "reason":
+                    "Storage degradation "
+                    "caused application slowdown"
+            }
+
+        # Network causing service degradation
+
+        if (
+            network_incident
+            and
+            application_incident
+        ):
+
+            return {
+                "root_cause":
+                    network_incident.get(
+                        "component",
+                        "core-network"
+                    ),
+                "confidence": 0.95,
+                "reason":
+                    "Network degradation "
+                    "caused application impact"
+            }
+
+        # Compute resource exhaustion
+
+        if compute_incident:
+
+            return {
+                "root_cause":
+                    compute_incident.get(
+                        "component",
+                        "worker-node-01"
+                    ),
+                "confidence": 0.90,
+                "reason":
+                    "Compute resource exhaustion "
+                    "impacted services"
+            }
+
+        # Storage only
+
+        if storage_incident:
+
+            return {
+                "root_cause":
+                    storage_incident.get(
+                        "component",
+                        "storage-cluster-a"
+                    ),
+                "confidence": 0.95,
+                "reason":
+                    "Storage degradation detected"
+            }
+
+        # Network only
+
+        if network_incident:
+
+            return {
+                "root_cause":
+                    network_incident.get(
+                        "component",
+                        "core-network"
+                    ),
+                "confidence": 0.90,
+                "reason":
+                    "Network degradation detected"
+            }
 
         return {
             "root_cause": "unknown",
