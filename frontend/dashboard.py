@@ -19,7 +19,19 @@ if str(PROJECT_ROOT) not in sys.path:
 import streamlit as st
 
 from telemetry.storage_generator import (
-    generate_metrics
+    generate_metrics as generate_storage_metrics
+)
+
+from telemetry.network_generator import (
+    generate_metrics as generate_network_metrics
+)
+
+from telemetry.compute_generator import (
+    generate_metrics as generate_compute_metrics
+)
+
+from telemetry.application_generator import (
+    generate_metrics as generate_application_metrics
 )
 
 from telemetry.fault_injector import (
@@ -139,7 +151,6 @@ learning_agent = (
     LearningAgent()
 )
 
-# Create RCA agent once
 rca_agent = RCAAgent()
 
 # --------------------------------------------------
@@ -147,8 +158,24 @@ rca_agent = RCAAgent()
 # --------------------------------------------------
 
 storage_metrics = (
-    generate_metrics()
+    generate_storage_metrics()
 )
+
+network_metrics = (
+    generate_network_metrics()
+)
+
+compute_metrics = (
+    generate_compute_metrics()
+)
+
+application_metrics = (
+    generate_application_metrics()
+)
+
+# --------------------------------------------------
+# Display Telemetry
+# --------------------------------------------------
 
 col1, col2 = st.columns(2)
 
@@ -162,37 +189,92 @@ with col1:
         storage_metrics
     )
 
-# --------------------------------------------------
-# Detect Anomaly
-# --------------------------------------------------
-
-incident = (
-    anomaly_agent.detect_anomaly(
-        storage_metrics
-    )
-)
-
 with col2:
 
     st.subheader(
-        "Incident"
+        "Network Telemetry"
+    )
+
+    st.json(
+        network_metrics
+    )
+
+col3, col4 = st.columns(2)
+
+with col3:
+
+    st.subheader(
+        "Compute Telemetry"
+    )
+
+    st.json(
+        compute_metrics
+    )
+
+with col4:
+
+    st.subheader(
+        "Application Telemetry"
+    )
+
+    st.json(
+        application_metrics
+    )
+
+# --------------------------------------------------
+# Detect Incidents
+# --------------------------------------------------
+
+all_metrics = [
+    storage_metrics,
+    network_metrics,
+    compute_metrics,
+    application_metrics
+]
+
+incidents = []
+
+for metric in all_metrics:
+
+    incident = (
+        anomaly_agent.detect_anomaly(
+            metric
+        )
     )
 
     if incident:
 
-        st.error(
-            "Anomaly Detected"
+        incidents.append(
+            incident
         )
+
+# --------------------------------------------------
+# Active Incidents
+# --------------------------------------------------
+
+st.divider()
+
+st.subheader(
+    "Active Incidents"
+)
+
+if incidents:
+
+    st.error(
+        f"{len(incidents)} active incident(s) detected"
+    )
+
+    for incident in incidents:
 
         st.json(
             incident
         )
 
-    else:
+else:
 
-        st.success(
-            "No Active Incident"
-        )
+    st.success(
+        "No Active Incidents"
+    )
 
 # --------------------------------------------------
 # Correlation
@@ -206,11 +288,7 @@ st.subheader(
 
 correlation_result = None
 
-if incident:
-
-    incidents = [
-        incident
-    ]
+if incidents:
 
     correlation_result = (
         correlation_agent.correlate(
@@ -241,7 +319,7 @@ st.subheader(
 
 learning_context = None
 
-if incident:
+if incidents:
 
     learning_context = (
         learning_agent
@@ -271,7 +349,7 @@ st.subheader(
 )
 
 if (
-    incident
+    incidents
     and correlation_result
 ):
 
